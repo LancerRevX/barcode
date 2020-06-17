@@ -15,29 +15,29 @@ namespace UpcA {
         '9': [3, 1, 1, 2]
     }
 
-    export function encode(prefix: string, code: string): number[] | null {
-        if (code.match(/^[0-9]{10}$/) == null || prefix.match(/^[0-9]{1}$/) == null)
+    export function encode(prefix: string, numbers: string): [number[], number] | null {
+        if (numbers.match(/^[0-9]{10}$/) == null || prefix.match(/^[0-9]{1}$/) == null)
             return null
         let lines = LINES.s
         lines = lines.concat(LINES[prefix])
-        for (let i = 0; i < code.length; i++) {
-            lines = lines.concat(LINES[code[i]])
+        for (let i = 0; i < numbers.length; i++) {
+            lines = lines.concat(LINES[numbers[i]])
             if (i == 4) {
                 lines = lines.concat(LINES.m)
             }
         }
         let check_digit = parseInt(prefix)
-        for (let i = 1; i < code.length; i += 2)
-            check_digit += parseInt(code[i])
+        for (let i = 1; i < numbers.length; i += 2)
+            check_digit += parseInt(numbers[i])
         check_digit *= 3
-        for (let i = 0; i < code.length; i += 2)
-            check_digit += parseInt(code[i])
+        for (let i = 0; i < numbers.length; i += 2)
+            check_digit += parseInt(numbers[i])
         check_digit %= 10
         check_digit = 10 - check_digit
         if (check_digit == 10)
             check_digit = 0
         lines = lines.concat(LINES[check_digit.toString()])
         lines = lines.concat(LINES.e)
-        return lines
+        return [lines, check_digit]
     }
 }
